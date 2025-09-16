@@ -1,32 +1,303 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Calculator</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-body{margin:0;font-family:Arial,sans-serif;background:transparent;display:flex;justify-content:center;align-items:center;height:100vh}
-.c{background:rgba(255,255,255,0.9);padding:20px;border-radius:15px;box-shadow:0 10px 25px rgba(0,0,0,0.3)}
-.d{width:100%;height:50px;background:#222;color:#0f0;font-size:1.8em;text-align:right;padding:10px;border-radius:10px;margin-bottom:15px;overflow-x:auto;box-sizing:border-box;overflow-wrap:break-word}
-.b{display:grid;grid-template-columns:repeat(4,60px);grid-gap:10px}
-.b button{padding:15px;font-size:1.2em;border-radius:10px;border:none;cursor:pointer;background:linear-gradient(45deg,#4caf50,#8bc34a);color:#fff;box-shadow:0 4px #388e3c;transition:all .2s}.b button:active{transform:scale(.95);box-shadow:0 2px #2e7d32}.o{background:linear-gradient(45deg,#f44336,#e91e63);box-shadow:0 4px #c2185b}
-</style>
+  <meta charset="UTF-8">
+  <title>Google Images</title>
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+  <style>
+    /* Reset */
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #0a0a0a, #1c1c1c, #2a2a2a);
+      color: #fff;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Website Loader */
+    #siteLoader {
+      position: fixed; inset:0;
+      background: linear-gradient(135deg, #000, #1a1a1a);
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      z-index:9999;
+      transition: opacity 0.8s ease;
+    }
+    .loaderText {
+      margin-top:15px;
+      font-size:1.3rem;
+      background: linear-gradient(to right,#bbb,#fff,#bbb);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      font-weight:bold;
+      letter-spacing:2px;
+    }
+    .spinner {
+      border: 4px solid rgba(255,255,255,0.2);
+      border-top: 4px solid #fff;
+      border-radius: 50%;
+      width: 60px; height: 60px;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg);} }
+
+    /* Container */
+    .container { 
+      opacity:0; 
+      transition: opacity 1s ease;
+      text-align:center;
+      width:100%;
+      max-width:1100px;
+      margin:auto;
+    }
+
+    h1 {
+      margin-bottom:30px;
+      font-size:2.3rem;
+      background:linear-gradient(to right,#fff,#aaa);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+    }
+
+    /* Buttons */
+    .buttons { display:flex; gap:50px; justify-content:center; margin-bottom:40px; }
+    .btn-container { display:flex; flex-direction:column; align-items:center; gap:8px; }
+    .btn {
+      background: rgba(255,255,255,0.08);
+      border: 2px solid rgba(255,255,255,0.2);
+      backdrop-filter: blur(10px);
+      padding: 15px 20px;
+      border-radius: 15px;
+      cursor: pointer;
+      font-size: 1.4rem;
+      color: #fff;
+      transition: all 0.3s ease;
+      width:80px; height:80px;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .btn:hover {
+      transform: translateY(-6px);
+      background: rgba(255,255,255,0.2);
+      border-color: #fff;
+      box-shadow: 0 0 15px rgba(255,255,255,0.4);
+    }
+    .tooltip { font-size:0.85rem; opacity:0.8; }
+
+    /* Quotes */
+    .quote-box { font-size:1.2rem; font-style:italic; margin-bottom:30px; }
+
+    /* Iframe */
+    .iframe-container {
+      position:relative;
+      width:90%; height:70vh;
+      margin:auto;
+      border-radius:15px;
+      overflow:hidden;
+      display:none;
+      flex-direction:column;
+      background:#111;
+    }
+    iframe { flex:1; width:100%; height:100%; border:none; }
+
+    /* Toolbar */
+    .iframe-toolbar {
+      position:absolute; top:10px; right:10px;
+      display:flex; gap:10px;
+      z-index:10;
+    }
+    .iframe-btn {
+      background:#000; color:#fff;
+      border:none; border-radius:8px;
+      width:40px; height:40px;
+      display:flex; align-items:center; justify-content:center;
+      cursor:pointer;
+      transition:background 0.3s;
+    }
+    .iframe-btn:hover { background:#333; }
+
+    /* Iframe loader */
+    .iframe-loader {
+      position:absolute; inset:0;
+      display:flex; flex-direction:column;
+      align-items:center; justify-content:center;
+      background:rgba(0,0,0,0.9);
+      font-size:1.2rem;
+      z-index:20;
+    }
+    .iframe-loader i { font-size:3rem; margin-bottom:10px; animation:bounce 1s infinite; }
+    @keyframes bounce { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-15px);} }
+
+    /* Changelog Modal */
+    .changelog {
+      position:fixed; inset:0;
+      background:rgba(0,0,0,0.7);
+      backdrop-filter:blur(10px);
+      display:flex; align-items:center; justify-content:center;
+      z-index:9998;
+    }
+    .changelog-box {
+      background:rgba(20,20,20,0.9);
+      padding:30px;
+      border-radius:15px;
+      width:400px;
+      text-align:left;
+      position:relative;
+    }
+    .changelog-box h2 {
+      margin-bottom:15px;
+      font-size:1.5rem;
+      background:linear-gradient(to right,#fff,#aaa);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+    }
+    .close-changelog {
+      position:absolute; top:10px; right:10px;
+      background:none; border:none;
+      font-size:1.2rem; color:#fff;
+      cursor:pointer;
+    }
+  </style>
 </head>
 <body>
-<div class="c">
-<div id="d" class="d">0</div>
-<div class="b">
-<button onclick="p('7')">7</button><button onclick="p('8')">8</button><button onclick="p('9')">9</button><button class='o' onclick="p('/')">÷</button>
-<button onclick="p('4')">4</button><button onclick="p('5')">5</button><button onclick="p('6')">6</button><button class='o' onclick="p('*')">×</button>
-<button onclick="p('1')">1</button><button onclick="p('2')">2</button><button onclick="p('3')">3</button><button class='o' onclick="p('-')">−</button>
-<button onclick="p('0')">0</button><button onclick="p('.')">.</button><button onclick="p('√')">√</button><button class='o' onclick="p('+')">+</button>
-<button class='o' onclick="p('^')">^</button><button class='o' onclick="p('%')">%</button><button class='o' onclick="c()">C</button><button class='o' onclick="e()">=</button>
-</div></div>
-<script>
-var x='';
-function p(v){x+=v;document.getElementById('d').textContent=x;}
-function c(){x='';document.getElementById('d').textContent='0';}
-function e(){try{var y=x.replace(/√(\d+(\.\d+)?)/g,'Math.sqrt($1)').replace(/(\d+(\.\d+)?)\^(\d+(\.\d+)?)/g,'Math.pow($1,$3)').replace(/(\d+(\.\d+)?)%/g,'($1/100)');var z=eval(y);document.getElementById('d').textContent=z;x=z.toString();if(z===13){var f=document.createElement('iframe');f.src='/ez.html';f.style.position='fixed';f.style.top='0';f.style.left='0';f.style.width='100vw';f.style.height='100vh';f.style.border='none';f.style.zIndex='9999';document.body.innerHTML='';document.body.appendChild(f);}}catch(err){document.getElementById('d').textContent='Error';x='';}}
-</script>
+  <!-- Site Loader -->
+  <div id="siteLoader">
+    <div class="spinner"></div>
+    <div class="loaderText">loading site</div>
+  </div>
+
+  <!-- Changelog -->
+  <div class="changelog" id="changelog">
+    <div class="changelog-box">
+      <button class="close-changelog" onclick="closeChangelog()"><i class="fa-solid fa-xmark"></i></button>
+      <h2>log v0.01</h2>
+      <ul>
+        <li> 🙏 released</li>
+        <li> 🚀 launcher cool</li>
+        <li> ⚒️ fixed iframe</li>
+        <li> 📜 fixed quotes</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="container" id="mainContent">
+
+    <!-- Buttons -->
+    <div class="buttons">
+      <div class="btn-container">
+        <button class="btn" onclick="launchIframe('	https://learning.inaltue.cl')">
+          <i class="fa-solid fa-shield-halved"></i>
+        </button>
+        <div class="tooltip">proxy</div>
+      </div>
+      <div class="btn-container">
+        <button class="btn" onclick="launchIframe('https://xn----ymcbahd8agoi7rd5b1b.dawuiiwauidwahyuiwahuioqwd.site/')">
+          <i class="fa-solid fa-gamepad"></i>
+        </button>
+        <div class="tooltip">games</div>
+      </div>
+    </div>
+
+    <!-- Quotes -->
+    <div class="quote-box" id="quoteBox">ssssssssssssss</div>
+
+    <!-- Iframe -->
+    <div class="iframe-container" id="iframeContainer">
+      <div class="iframe-toolbar">
+        <button class="iframe-btn" onclick="toggleFullscreen()"><i class="fa-solid fa-expand"></i></button>
+        <button class="iframe-btn" onclick="launchAboutBlank()"><i class="fa-solid fa-window-restore"></i></button>
+      </div>
+      <div class="iframe-loader" id="iframeLoader">
+        <i class="fa-solid fa-rocket"></i>
+        <div>get ready to be amazed..</div>
+      </div>
+      <iframe id="viewer"></iframe>
+    </div>
+  </div>
+
+  <script>
+    // Site loader
+    window.addEventListener("load", () => {
+      setTimeout(() => {
+        document.getElementById("siteLoader").style.opacity="0";
+        setTimeout(() => {
+          document.getElementById("siteLoader").style.display="none";
+          document.getElementById("mainContent").style.opacity="1";
+        },800);
+      },1500);
+    });
+
+    // Changelog
+    function closeChangelog(){
+      document.getElementById("changelog").style.display="none";
+      localStorage.setItem("changelogClosed","true");
+    }
+    if(localStorage.getItem("changelogClosed")==="true"){
+      document.getElementById("changelog").style.display="none";
+    }
+
+    // Quotes
+    const quotes=["c 💖  z","auggie get off games","auggie, can u make me some food plz","hi everybody im a text and ur reading me","67676767676767676767676767676767676767676767676767676767676767676767676767","theres an ultra rare quote, maybe u can find it? (0.05% chance)","yo who wants a quote to themselves?","ahh dang we are looping back now i guess", "this is the ultra rare quote.... JK","dang u have the best attention span dont you!","wow man im really proud of you, i expected you to be on games rn","do you... really want to keep going?","this has taken like 1 minute of your time... i dont think you want to keep going","oh well then, i guess i cant stop you, now we are looping back to the start. HAHAHA"];
+    let current=0;
+    function rotateQuotes(){
+      document.getElementById("quoteBox").textContent=quotes[current];
+      current=(current+1)%quotes.length;
+    }
+    rotateQuotes(); setInterval(rotateQuotes,2000);
+
+    // Iframe
+    function launchIframe(url){
+      const container=document.getElementById("iframeContainer");
+      const loader=document.getElementById("iframeLoader");
+      const iframe=document.getElementById("viewer");
+      container.style.display="flex";
+      loader.style.display="flex";
+      iframe.style.display="none";
+      setTimeout(()=>{iframe.src=url;},500);
+      iframe.onload=()=>{
+        setTimeout(()=>{
+          loader.style.display="none";
+          iframe.style.display="block";
+        },1200);
+      };
+    }
+
+    // About:blank launcher
+    function launchAboutBlank(){
+      const url=document.getElementById("viewer").src;
+      const win=window.open("about:blank","_blank");
+      const doc=win.document;
+      doc.write(`
+        <html><head>
+          <style>
+            body{margin:0;display:flex;align-items:center;justify-content:center;height:100vh;background:#000;color:#fff;font-family:sans-serif;}
+            .spinner{border:4px solid rgba(255,255,255,0.2);border-top:4px solid #fff;border-radius:50%;width:60px;height:60px;animation:spin 1s linear infinite;}
+            @keyframes spin{to{transform:rotate(360deg);}}
+          </style></head>
+        <body>
+          <div>
+            <div class="spinner"></div>
+            <p style="margin-top:0px;"></p>
+          </div>
+          <script>
+            setTimeout(()=>{
+              document.body.innerHTML='<iframe src="${url}" style="border:none;width:100vw;height:100vh;"></iframe>';
+            },1500);
+          <\/script>
+        </body></html>
+      `);
+      doc.close();
+    }
+
+    // Fullscreen
+    function toggleFullscreen(){
+      const iframe=document.getElementById("viewer");
+      if(iframe.requestFullscreen) iframe.requestFullscreen();
+    }
+  </script>
 </body>
 </html>

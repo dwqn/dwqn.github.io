@@ -2,8 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Classlink Home</title>
+  <title>Google API</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
     body {
       font-family: 'Poppins', sans-serif;
       background: linear-gradient(135deg, #000000, #333333);
@@ -14,6 +16,7 @@
       min-height: 100vh;
       margin: 0;
       color: #fff;
+      overflow: hidden;
     }
 
     h1 {
@@ -48,14 +51,29 @@
   </style>
 </head>
 <body>
-  <h1>open educational homes</h1>
-  <button class="button" onclick="openYerp()">get a home</button>
+  <h1>hi how are u doing yes im doing good thanks for asking</h1>
+  <button class="button" onclick="openYerp()">open site</button>
 
   <script>
     function openYerp() {
       let win = window.open("about:blank", "_blank");
-      win.document.write('<iframe src="yerp.html" style="border:none;width:100%;height:100vh;"></iframe>');
-      win.document.title = "Yerp";
+      win.document.write(`
+        <style>
+          html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+          }
+          iframe {
+            border: none;
+            width: 100vw;
+            height: 100vh;
+          }
+        </style>
+        <iframe src="yerp.html"></iframe>
+      `);
+      win.document.title = "GAMES OH YUHHH";
     }
   </script>
 </body>

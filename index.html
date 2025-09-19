@@ -9,45 +9,37 @@
       justify-content: center;
       align-items: center;
       height: 100vh;
-      background: #f0f0f0;
-      font-family: Arial, sans-serif;
+      background: #000;
+      font-family: 'Segoe UI', sans-serif;
       margin: 0;
-      text-align: center;
     }
     .container {
-      background: white;
-      padding: 40px;
-      border-radius: 15px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      text-align: center;
+      color: #fff;
     }
     button {
-      background: linear-gradient(135deg, #4cafef, #2196f3);
-      border: none;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.3);
       padding: 15px 40px;
-      font-size: 18px;
-      color: white;
+      font-size: 20px;
+      color: #fff;
       border-radius: 12px;
       cursor: pointer;
-      transition: 0.3s;
+      backdrop-filter: blur(8px);
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
     button:hover {
-      background: linear-gradient(135deg, #2196f3, #0d8ddb);
-    }
-    #result {
-      margin-top: 20px;
-      font-size: 18px;
-    }
-    #result a {
-      color: #2196f3;
-      text-decoration: none;
-      font-weight: bold;
+      background: rgba(255, 255, 255, 0.25);
+      transform: scale(1.08);
+      box-shadow: 0 0 20px rgba(255,255,255,0.5);
     }
   </style>
 </head>
 <body>
   <div class="container">
     <button onclick="generateSite()">Generate</button>
-    <div id="result"></div>
   </div>
 
   <script>
@@ -61,10 +53,8 @@
 
     function generateSite() {
       const randomSite = websites[Math.floor(Math.random() * websites.length)];
-      document.getElementById("result").innerHTML = `
-        <p>Warning: if this site is blocked pls regenerate</p>
-        <p><a href="${randomSite}" target="_blank">${randomSite}</a></p>
-      `;
+      alert("⚠️ Warning: if this site is blocked, please regenerate!");
+      window.open(randomSite, "_blank");
     }
   </script>
 </body>
